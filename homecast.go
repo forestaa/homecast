@@ -78,6 +78,43 @@ func (g *CastDevice) Play(ctx context.Context, url *url.URL) error {
 	return err
 }
 
+func (g *CastDevice) QueueLoad(ctx context.Context, urls []*url.URL) error {
+	conn := castnet.NewConnection()
+	if err := conn.Connect(ctx, g.AddrV4, g.Port); err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	status, err := g.client.Receiver().LaunchApp(ctx, cast.AppMedia)
+	if err != nil {
+		return err
+	}
+	app := status.GetSessionByAppId(cast.AppMedia)
+
+	cc := controllers.NewConnectionController(conn, g.client.Events, cast.DefaultSender, *app.TransportId)
+	if err := cc.Start(ctx); err != nil {
+		return err
+	}
+	media := controllers.NewMediaController(conn, g.client.Events, cast.DefaultSender, *app.TransportId)
+	if err := media.Start(ctx); err != nil {
+		return err
+	}
+
+	items := make([]controllers.MediaItem, len(urls))
+	for i, url := range urls {
+		items[i] = controllers.MediaItem{
+			ContentId:   url.String(),
+			ContentType: "audio/mp3",
+			StreamType:  "BUFFERED",
+		}
+	}
+
+	log.Print("[INFO] Queue load")
+	_, err = media.QueueLoad(ctx, items, nil, 0, nil)
+
+	return err
+}
+
 // LookupAndConnect retrieves cast-able google home devices
 func LookupAndConnect(ctx context.Context) []*CastDevice {
 	entriesCh := make(chan *mdns.ServiceEntry, 4)
