@@ -78,7 +78,15 @@ func (g *CastDevice) Play(ctx context.Context, url *url.URL) error {
 	return err
 }
 
-func (g *CastDevice) QueueLoad(ctx context.Context, urls []*url.URL) error {
+// MediaData contains URL and metadata for media
+type MediaData struct {
+	URL   *url.URL
+	Title string
+}
+
+// QueueLoad plays playlist on cast device
+// See https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.QueueLoadRequest
+func (g *CastDevice) QueueLoad(ctx context.Context, data []MediaData) error {
 	conn := castnet.NewConnection()
 	if err := conn.Connect(ctx, g.AddrV4, g.Port); err != nil {
 		return err
@@ -100,17 +108,21 @@ func (g *CastDevice) QueueLoad(ctx context.Context, urls []*url.URL) error {
 		return err
 	}
 
-	items := make([]controllers.MediaItem, len(urls))
-	for i, url := range urls {
+	items := make([]controllers.MediaItem, len(data))
+	for i, d := range data {
 		items[i] = controllers.MediaItem{
-			ContentId:   url.String(),
-			ContentType: "audio/mp3",
+			ContentId:   d.URL.String(),
 			StreamType:  "BUFFERED",
+			ContentType: "audio/mp3",
+			MetaData: controllers.MediaMetaData{
+				MetaDataType: 3,
+				Title:        d.Title,
+			},
 		}
 	}
 
 	log.Print("[INFO] Queue load")
-	_, err = media.QueueLoad(ctx, items, nil, 0, nil)
+	_, err = media.QueueLoad(ctx, items, 0, nil)
 
 	return err
 }
