@@ -2,7 +2,8 @@
 
 
 [[projects]]
-  branch = "master"
+  branch = "queueload"
+  digest = "1:36eb5747849e710b4c4e6133325d87d857b3cc05d70f16ff7cc936aa1a8de986"
   name = "github.com/barnybug/go-cast"
   packages = [
     ".",
@@ -10,49 +11,50 @@
     "controllers",
     "events",
     "log",
-    "net"
+    "net",
   ]
-  revision = "a92c32bbc819c2f66ea81659a2f8b40aa58e3203"
+  pruneopts = "UT"
+  revision = "c427c194fc28112f6ef2b9d298baac72bac1095c"
+  source = "github.com/forestaa/go-cast.git"
 
 [[projects]]
+  digest = "1:9a688317f3231e0175b3429033f44411906c0ce119361b7b5019d01375f8cff7"
   name = "github.com/gogo/protobuf"
   packages = ["proto"]
+  pruneopts = "UT"
   revision = "1adfc126b41513cc696b209667c8656ea7aac67c"
   version = "v1.0.0"
 
 [[projects]]
-  branch = "master"
-  name = "github.com/hashicorp/go.net"
-  packages = [
-    "internal/iana",
-    "ipv4",
-    "ipv6"
-  ]
-  revision = "104dcad90073cd8d1e6828b2af19185b60cf3e29"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/hashicorp/mdns"
+  digest = "1:6271fb71dcd6758564f64edeb022e7fc4485fa5a63dcb68805ab760e2ec34ead"
+  name = "github.com/micro/mdns"
   packages = ["."]
-  revision = "4e527d9d808175f132f949523e640c699e4253bb"
+  pruneopts = "UT"
+  revision = "3a29b6675e7404722eed4d4dde532c2e103007a7"
+  version = "v0.1.0"
 
 [[projects]]
+  digest = "1:39404cfbb35df632e9225831977e498395916ff8b20bec1aca98b4daace26e22"
   name = "github.com/miekg/dns"
   packages = ["."]
+  pruneopts = "UT"
   revision = "83c435cc65d2862736428b9b4d07d0ab10ad3e4d"
   version = "v1.0.5"
 
 [[projects]]
   branch = "master"
+  digest = "1:6d3fd61842d17fc8731b167771cfb564d06cb71c75fcb7efbe9b368a6081c1f3"
   name = "golang.org/x/crypto"
   packages = [
     "ed25519",
-    "ed25519/internal/edwards25519"
+    "ed25519/internal/edwards25519",
   ]
+  pruneopts = "UT"
   revision = "b49d69b5da943f7ef3c9cf91c8777c1f78a0cc3c"
 
 [[projects]]
   branch = "master"
+  digest = "1:efa7281b594f7efa2f2c1adda314f45f1cb58d5ba2fa2f9f63c6b0ce50e040ac"
   name = "golang.org/x/net"
   packages = [
     "bpf",
@@ -60,13 +62,19 @@
     "internal/iana",
     "internal/socket",
     "ipv4",
-    "ipv6"
+    "ipv6",
   ]
+  pruneopts = "UT"
   revision = "5f9ae10d9af5b1c89ae6904293b14b064d4ada23"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "86071cb02809e025c5bc219380abfa83b614cfd5f5014dadd4abc851fa577f53"
+  input-imports = [
+    "github.com/barnybug/go-cast",
+    "github.com/barnybug/go-cast/controllers",
+    "github.com/barnybug/go-cast/net",
+    "github.com/micro/mdns",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1
