@@ -148,7 +148,10 @@ func LookupAndConnect(ctx context.Context) []*CastDevice {
 		}
 	}()
 
-	mdns.Lookup(googleCastServiceName, entriesCh)
+	err := mdns.Lookup(googleCastServiceName, entriesCh)
+	if err != nil {
+		log.Printf("[Error] Failed to lookup devices: %v", err)
+	}
 	close(entriesCh)
 
 	return results
