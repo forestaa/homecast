@@ -9,7 +9,6 @@ import (
 
 	"github.com/barnybug/go-cast"
 	"github.com/barnybug/go-cast/controllers"
-	castnet "github.com/barnybug/go-cast/net"
 	"github.com/micro/mdns"
 )
 
@@ -45,24 +44,8 @@ func (g *CastDevice) Speak(ctx context.Context, text, lang string) error {
 
 // Play plays media contents on cast device
 func (g *CastDevice) Play(ctx context.Context, url *url.URL) error {
-	conn := castnet.NewConnection()
-	if err := conn.Connect(ctx, g.AddrV4, g.Port); err != nil {
-		return err
-	}
-	defer conn.Close()
-
-	status, err := g.client.Receiver().LaunchApp(ctx, cast.AppMedia)
+	media, err := g.client.Media(ctx)
 	if err != nil {
-		return err
-	}
-	app := status.GetSessionByAppId(cast.AppMedia)
-
-	cc := controllers.NewConnectionController(conn, g.client.Events, cast.DefaultSender, *app.TransportId)
-	if err := cc.Start(ctx); err != nil {
-		return err
-	}
-	media := controllers.NewMediaController(conn, g.client.Events, cast.DefaultSender, *app.TransportId)
-	if err := media.Start(ctx); err != nil {
 		return err
 	}
 
@@ -87,24 +70,8 @@ type MediaData struct {
 // QueueLoad plays playlist on cast device
 // See https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.QueueLoadRequest
 func (g *CastDevice) QueueLoad(ctx context.Context, data []MediaData) error {
-	conn := castnet.NewConnection()
-	if err := conn.Connect(ctx, g.AddrV4, g.Port); err != nil {
-		return err
-	}
-	defer conn.Close()
-
-	status, err := g.client.Receiver().LaunchApp(ctx, cast.AppMedia)
+	media, err := g.client.Media(ctx)
 	if err != nil {
-		return err
-	}
-	app := status.GetSessionByAppId(cast.AppMedia)
-
-	cc := controllers.NewConnectionController(conn, g.client.Events, cast.DefaultSender, *app.TransportId)
-	if err := cc.Start(ctx); err != nil {
-		return err
-	}
-	media := controllers.NewMediaController(conn, g.client.Events, cast.DefaultSender, *app.TransportId)
-	if err := media.Start(ctx); err != nil {
 		return err
 	}
 
