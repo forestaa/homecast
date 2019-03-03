@@ -127,6 +127,31 @@ func (g *CastDevice) QueueLoad(ctx context.Context, data []MediaData) error {
 	return err
 }
 
+func (g *CastDevice) QueueInsert(ctx context.Context, data []MediaData) error {
+	media, err := g.client.Media(ctx)
+	if err != nil {
+		return err
+	}
+
+	items := make([]controllers.MediaItem, len(data))
+	for i, d := range data {
+		items[i] = controllers.MediaItem{
+			ContentId:   d.URL.String(),
+			StreamType:  "BUFFERED",
+			ContentType: "audio/mp3",
+			MetaData: controllers.MediaMetaData{
+				MetaDataType: 3,
+				Title:        d.Title,
+			},
+		}
+	}
+
+	log.Print("[INFO] Queue insert")
+	_, err = media.QueueInsert(ctx, items, nil)
+
+	return err
+}
+
 // LookupAndConnect retrieves cast-able google home devices
 func LookupAndConnect(ctx context.Context) []*CastDevice {
 	entriesCh := make(chan *mdns.ServiceEntry, 4)
